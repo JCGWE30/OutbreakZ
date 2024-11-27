@@ -1,0 +1,10 @@
+name: OutbreakZ
+version: '1.0'
+main: org.lepigslayer.outbreakZ.OutbreakZ
+api-version: '1.21'
+depends: [ProtocolLib]
+commands:
+  infection:
+    usage: infection
+  session:
+    usage: session
