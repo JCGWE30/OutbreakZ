@@ -25,6 +25,7 @@ public class InfectionState {
 
     void changeRessistance(float amount){
         infectionRessitance += amount;
+        infectionRessitance = Math.min(100,infectionRessitance);
         InfectionSystem.tryInfect(owner);
     }
 
@@ -32,6 +33,7 @@ public class InfectionState {
         if(isInfected())
             return;
         infectionPercentage += amount;
+        infectionRessitance = Math.max(0, infectionPercentage);
         InfectionSystem.tryInfect(owner);
     }
 
