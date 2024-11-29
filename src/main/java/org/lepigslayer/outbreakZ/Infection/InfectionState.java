@@ -3,9 +3,10 @@ package org.lepigslayer.outbreakZ.Infection;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.io.Serializable;
 import java.util.UUID;
 
-public class InfectionState {
+public class InfectionState implements Serializable {
     private transient Player owner;
     private long lastHit = 0;
     private float infectionPercentage = 0;
@@ -13,6 +14,10 @@ public class InfectionState {
 
     public InfectionState(UUID uid) {
         owner= Bukkit.getPlayer(uid);
+    }
+
+    void setPlayer(Player p){
+        owner = p;
     }
 
     long getLastHit() {

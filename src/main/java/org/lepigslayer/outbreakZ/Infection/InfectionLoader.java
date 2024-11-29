@@ -32,7 +32,6 @@ public class InfectionLoader {
     }
 
     private static void saveToFile(String fileName, Object obj, Plugin plugin){
-
         File folder = plugin.getDataFolder();
 
         if(!folder.exists()){
@@ -41,16 +40,16 @@ public class InfectionLoader {
 
         File file = new File(folder, fileName);
 
-        if(file.exists()){
-            try{
-                FileOutputStream fis = new FileOutputStream(file);
+        try{
+            file.createNewFile();
 
-                ObjectOutputStream ois = new ObjectOutputStream(fis);
-                ois.writeObject(obj);
-                ois.close();
-            }catch(Exception ignored){
-                throw new RuntimeException("File Write Error");
-            }
+            FileOutputStream fis = new FileOutputStream(file);
+
+            ObjectOutputStream ois = new ObjectOutputStream(fis);
+            ois.writeObject(obj);
+            ois.close();
+        }catch(IOException e){
+            throw new RuntimeException(e);
         }
     }
 
