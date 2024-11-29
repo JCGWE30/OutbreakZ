@@ -65,6 +65,10 @@ public class InfectionSystem{
         getInfectionState(p).changeInfection(SESSION_LOSS);
     }
 
+    static void execute(Player p){
+        instance.turnDates.remove(p.getUniqueId());
+    }
+
     public static void infect(Player p){
         p.playSound(p, Sound.ENTITY_ENDERMAN_STARE,1f,0.5f);
         p.sendMessage("§c§lYou feel a cursed influence throughout your body, it wont be long before you become one of them. Your fate has been sealed");

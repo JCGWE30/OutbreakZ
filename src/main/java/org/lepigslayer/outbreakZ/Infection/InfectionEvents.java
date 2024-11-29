@@ -90,7 +90,6 @@ public class InfectionEvents implements Listener {
         if(!e.isPlayerCaused()) return;
 
         Player victim = e.getPlayer();
-        Player killer = e.getKiller();
 
         if(!isInfected(victim)) return;
 
@@ -98,6 +97,11 @@ public class InfectionEvents implements Listener {
         victim.setGameMode(GameMode.SPECTATOR);
         victim.sendTitle("§4§lEXECUTED!!!","§aYour game is over!");
         victim.getWorld().strikeLightningEffect(victim.getLocation());
+        InfectionSystem.execute(victim);
+
+        if(InfectionSystem.getInfectedPlayers().isEmpty()){
+            Bukkit.getOnlinePlayers().forEach(p->p.sendMessage("§3§lThe air seems clean. The infection has been eradicated. Humanity has prevailed"));
+        }
     }
 
     private void processDeath(PlayerDiesEvent e){
