@@ -40,6 +40,7 @@ public class InfectionSystem{
 
     private HashMap<UUID, Integer> turnDates;
     private HashMap<UUID, InfectionState> states;
+    private Plugin plugin;
 
     static InfectionState getInfectionState(Player attacker) {
         return instance.states.get(attacker.getUniqueId());
@@ -91,8 +92,10 @@ public class InfectionSystem{
 
     public static void init(Plugin plugin) {
         instance = new InfectionSystem();
+        instance.plugin = plugin;
         instance.turnDates = InfectionLoader.loadTurnDates(plugin);
         instance.states = InfectionLoader.loadInfectionStates(plugin);
+        instance.states.forEach((u,s)->s.setPlayer(Bukkit.getPlayer(u)));
     }
 
     public static void reloadNames(){
@@ -120,5 +123,10 @@ public class InfectionSystem{
         InfectionState state = getInfectionState(player);
         state.changeInfection(-100);
         state.changeRessistance(10);
+    }
+
+    public static void saveStates(){
+        InfectionLoader.saveInfectionStates(instance.plugin,instance.states);
+        InfectionLoader.saveTurnDates(instance.plugin,instance.turnDates);
     }
 }

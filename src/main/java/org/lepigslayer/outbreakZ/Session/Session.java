@@ -31,12 +31,16 @@ public class Session implements Listener {
             return !isStarting;
         }
 
+        public static HandlerList getHandlerList() {
+            return HANDLERS;
+        }
+
         @Override
         public HandlerList getHandlers() {
             return HANDLERS;
         }
     }
-    public static final long SESSION_LENGTH = TimeUnit.MINUTES.toMillis(1);
+    public static final long SESSION_LENGTH = TimeUnit.SECONDS.toMillis(10);
 
     private int sessionNumber;
     private long sessionStart;
@@ -98,7 +102,7 @@ public class Session implements Listener {
 
                 if(progress<=0){
                     isStarted = false;
-                    OutbreakZ.callEvent(new SessionStateChangeEvent(true));
+                    OutbreakZ.callEvent(new SessionStateChangeEvent(false));
                 }
 
                 bossBar.setProgress(Math.max(progress,0));

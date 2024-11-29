@@ -17,6 +17,7 @@ import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scheduler.BukkitWorker;
 import org.lepigslayer.outbreakZ.Infection.Util.PlayerDiesEvent;
 import org.lepigslayer.outbreakZ.OutbreakZ;
+import org.lepigslayer.outbreakZ.Session.Session;
 import org.lepigslayer.outbreakZ.Utils.TaskRunner;
 
 import java.util.Date;
@@ -34,6 +35,14 @@ public class InfectionEvents implements Listener {
     public InfectionEvents(Plugin plugin) {
         instance = this;
         InfectionSystem.init(plugin);
+    }
+
+    @EventHandler
+    public void sessionEnd(Session.SessionStateChangeEvent e){
+        System.out.println(e.isEnded());
+        if(e.isEnded()){
+            InfectionSystem.saveStates();
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGH)

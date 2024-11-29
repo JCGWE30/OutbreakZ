@@ -16,7 +16,10 @@ import org.jetbrains.annotations.NotNull;
 import org.lepigslayer.outbreakZ.Commands.Annotations.CommandAccess;
 import org.lepigslayer.outbreakZ.Commands.Annotations.CommandAccessLevel;
 import org.lepigslayer.outbreakZ.Commands.Annotations.RegisterCommand;
+import org.lepigslayer.outbreakZ.Infection.InfectionState;
+import org.lepigslayer.outbreakZ.Infection.InfectionSystem;
 
+import java.lang.reflect.Field;
 import java.util.*;
 
 @RegisterCommand("testpacket")
@@ -24,18 +27,6 @@ import java.util.*;
 public class TestPacketCommand implements CommandExecutor{
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-        for(Player p: Bukkit.getOnlinePlayers()){
-            PacketContainer pc = new PacketContainer(PacketType.Play.Server.SCOREBOARD_TEAM);
-
-            pc.getIntegers().write(0, 3);
-
-            pc.getStrings().write(0,"infected");
-
-            pc.getSpecificModifier(Collection.class)
-                            .write(0,Collections.singletonList(p.getName()));
-
-            ProtocolLibrary.getProtocolManager().broadcastServerPacket(pc);
-        }
         return true;
     }
 }
