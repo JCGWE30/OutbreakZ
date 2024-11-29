@@ -15,6 +15,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scheduler.BukkitWorker;
+import org.lepigslayer.outbreakZ.Infection.Util.PlayerDiesEvent;
 import org.lepigslayer.outbreakZ.OutbreakZ;
 import org.lepigslayer.outbreakZ.Utils.TaskRunner;
 
@@ -66,7 +67,7 @@ public class InfectionEvents implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void executionDeath(PlayerDeathEvent e){
+    public void executionDeath(PlayerDiesEvent e){
         if (!OutbreakZ.getSession().isOngoing()){
             e.setCancelled(true);
             return;
@@ -76,11 +77,12 @@ public class InfectionEvents implements Listener {
         processDeath(e);
     }
 
-    private void processExecution(PlayerDeathEvent e){
-        Player victim = e.getEntity();
-        Player killer = e.getEntity().getKiller();
+    private void processExecution(PlayerDiesEvent e){
+        if(!e.isPlayerCaused()) return;
 
-        if(killer == null) return;
+        Player victim = e.getPlayer();
+        Player killer = e.getKiller();
+
         if(!isInfected(victim)) return;
 
         e.setCancelled(true);
@@ -89,9 +91,9 @@ public class InfectionEvents implements Listener {
         victim.getWorld().strikeLightningEffect(victim.getLocation());
     }
 
-    private void processDeath(PlayerDeathEvent e){
-        Player victim = e.getEntity();
-        Player killer = e.getEntity().getKiller();
+    private void processDeath(PlayerDiesEvent e){
+        Player victim = e.getPlayer();
+        Player killer = e.getKiller();
 
         long ressistanceRemoved = killer == null ? DEATH_LOSS : PLAYER_DEATH_LOSS;
         getInfectionState(victim).changeRessistance(-ressistanceRemoved);
@@ -101,7 +103,7 @@ public class InfectionEvents implements Listener {
 
         TaskRunner.runNextTick(()->victim.teleport(loc));
 
-        victim.clearActivePotionEffects();
+        victim.getActivePotionEffects().forEach(pt->victim.removePotionEffect(pt.getType()));
         victim.sendMessage("§7You Died");
         victim.setHealth(victim.getMaxHealth());
         victim.setFoodLevel(20);

@@ -1,19 +1,21 @@
 package org.lepigslayer.outbreakZ.Infection;
 
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.events.PacketContainer;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.scoreboard.Team;
 import org.lepigslayer.outbreakZ.OutbreakZ;
 
 import java.io.*;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class InfectionSystem{
@@ -77,6 +79,7 @@ public class InfectionSystem{
             p.sendMessage("§c§lYou soon realize that you are alone in this cursed world, spread your influence, and hunt down humanity.");
         }
         instance.turnDates.put(p.getUniqueId(), OutbreakZ.getSession().getSessionNumber()+2);
+        reloadNames();
     }
 
     public static void addMissingPlayers() {
@@ -90,5 +93,28 @@ public class InfectionSystem{
         instance = new InfectionSystem();
         instance.turnDates = InfectionLoader.loadTurnDates(plugin);
         instance.states = InfectionLoader.loadInfectionStates(plugin);
+    }
+
+    public static void reloadNames(){
+        
+        Bukkit.getScoreboardManager().getMainScoreboard()
+        for(Player p:Bukkit.getOnlinePlayers()){
+            p.getScoreboard().getTeams().forEach(Team::unregister);
+            p.getScoreboard().registerNewTeam("infected").setColor(ChatColor.RED);
+        }
+
+        PacketContainer addPacket = new PacketContainer(PacketType.Play.Server.SCOREBOARD_TEAM);
+
+        addPacket.getIntegers().write(0, 3);
+
+        addPacket.getStrings().write(0,"infected");
+
+        addPacket.getSpecificModifier(Collection.class)
+                .write(0,Bukkit.getOnlinePlayers().stream()
+                        .filter(InfectionSystem::isInfected)
+                        .map(Player::getName).toList()
+                );
+
+        ProtocolLibrary.getProtocolManager().broadcastServerPacket(addPacket,getInfectedPlayers());
     }
 }

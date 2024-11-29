@@ -1,8 +1,9 @@
 package org.lepigslayer.outbreakZ.Session;
 
-import net.kyori.adventure.bossbar.BossBar;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -11,7 +12,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.lepigslayer.outbreakZ.Infection.InfectionEvents;
 import org.lepigslayer.outbreakZ.Infection.InfectionSystem;
 import org.lepigslayer.outbreakZ.OutbreakZ;
-import org.lepigslayer.outbreakZ.Utils.NameStateHolder;
 import org.lepigslayer.outbreakZ.Utils.TaskRunner;
 
 import java.text.SimpleDateFormat;
@@ -49,12 +49,13 @@ public class Session implements Listener {
         this.sessionStart = System.currentTimeMillis();
         this.isStarted = true;
 
-        this.bossBar = BossBar.bossBar(Component.text("§eTime Remaining: "+getFormattedTime()),1f, BossBar.Color.YELLOW, BossBar.Overlay.PROGRESS);
+        this.bossBar = Bukkit.createBossBar("§eTime Remaining: "+getFormattedTime(), BarColor.YELLOW, BarStyle.SOLID);
 
         InfectionSystem.addMissingPlayers();
+        InfectionSystem.reloadNames();
 
         for(Player p: Bukkit.getOnlinePlayers()){
-            p.showBossBar(this.bossBar);
+            bossBar.addPlayer(p);
             InfectionSystem.removeSessionInfection(p);
         }
 
@@ -100,8 +101,8 @@ public class Session implements Listener {
                     OutbreakZ.callEvent(new SessionStateChangeEvent(true));
                 }
 
-                bossBar.progress(Math.max(progress,0));
-                bossBar.name(Component.text("§eTime: "+getFormattedTime()));
+                bossBar.setProgress(Math.max(progress,0));
+                bossBar.setTitle("§eTime: "+getFormattedTime());
             }
         });
     }

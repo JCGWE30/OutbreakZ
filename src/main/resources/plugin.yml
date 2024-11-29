@@ -8,3 +8,5 @@ commands:
     usage: infection
   session:
     usage: session
+  testpacket:
+    usage: testpacket
