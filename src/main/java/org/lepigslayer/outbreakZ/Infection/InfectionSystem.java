@@ -45,7 +45,7 @@ public class InfectionSystem{
         return instance.states.get(attacker.getUniqueId());
     }
 
-    static boolean isInfected(Player p) {
+    public static boolean isInfected(Player p) {
         return getInfectedPlayers().contains(p);
     }
 
@@ -96,8 +96,6 @@ public class InfectionSystem{
     }
 
     public static void reloadNames(){
-        
-        Bukkit.getScoreboardManager().getMainScoreboard()
         for(Player p:Bukkit.getOnlinePlayers()){
             p.getScoreboard().getTeams().forEach(Team::unregister);
             p.getScoreboard().registerNewTeam("infected").setColor(ChatColor.RED);
@@ -116,5 +114,11 @@ public class InfectionSystem{
                 );
 
         ProtocolLibrary.getProtocolManager().broadcastServerPacket(addPacket,getInfectedPlayers());
+    }
+
+    public static void applyCure(Player player) {
+        InfectionState state = getInfectionState(player);
+        state.changeInfection(-100);
+        state.changeRessistance(10);
     }
 }

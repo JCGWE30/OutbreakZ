@@ -9,6 +9,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.lepigslayer.outbreakZ.Commands.CommandRegisterer;
 import org.lepigslayer.outbreakZ.Infection.InfectionEvents;
 import org.lepigslayer.outbreakZ.Infection.Util.EventWrapper;
+import org.lepigslayer.outbreakZ.Items.InfectionCureManager;
 import org.lepigslayer.outbreakZ.Session.Session;
 import org.lepigslayer.outbreakZ.Utils.TaskRunner;
 import org.lepigslayer.outbreakZ.Utils.UtilEvents;
@@ -27,6 +28,7 @@ public final class OutbreakZ extends JavaPlugin {
         TaskRunner.initTaskRunner(this);
 
         getServer().getPluginManager().registerEvents(new EventWrapper(),this);
+        getServer().getPluginManager().registerEvents(new InfectionCureManager(this),this);
         getServer().getPluginManager().registerEvents(new InfectionEvents(this),this);
         getServer().getPluginManager().registerEvents(new UtilEvents(),this);
         getServer().getPluginManager().registerEvents(currentSession,this);
