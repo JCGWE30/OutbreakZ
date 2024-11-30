@@ -63,6 +63,12 @@ public class InfectionSystem{
 
     public static void removeSessionInfection(Player p){
         getInfectionState(p).changeInfection(SESSION_LOSS);
+        if(isInfected(p)){
+            int turnDate = instance.turnDates.get(p.getUniqueId());
+            if(turnDate==OutbreakZ.getSession().getSessionNumber()){
+                p.sendMessage("§c§lThe infection has taken hold of your body. You can hardly see clearly anymore. This will be your last day a human");
+            }
+        }
     }
 
     static void execute(Player p){
