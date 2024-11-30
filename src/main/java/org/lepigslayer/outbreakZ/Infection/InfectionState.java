@@ -7,17 +7,13 @@ import java.io.Serializable;
 import java.util.UUID;
 
 public class InfectionState implements Serializable {
-    private transient Player owner;
+    private UUID owner;
     private long lastHit = 0;
     private float infectionPercentage = 0;
     private float infectionRessitance = 100;
 
     public InfectionState(UUID uid) {
-        owner= Bukkit.getPlayer(uid);
-    }
-
-    void setPlayer(Player p){
-        owner = p;
+        owner=uid;
     }
 
     long getLastHit() {
@@ -31,7 +27,7 @@ public class InfectionState implements Serializable {
     void changeRessistance(float amount){
         infectionRessitance += amount;
         infectionRessitance = Math.min(100,infectionRessitance);
-        InfectionSystem.tryInfect(owner);
+        InfectionSystem.tryInfect(Bukkit.getPlayer(owner));
     }
 
     void changeInfection(float amount){
@@ -39,7 +35,7 @@ public class InfectionState implements Serializable {
             return;
         infectionPercentage += amount;
         infectionRessitance = Math.max(0, infectionPercentage);
-        InfectionSystem.tryInfect(owner);
+        InfectionSystem.tryInfect(Bukkit.getPlayer(owner));
     }
 
     boolean isInfected(){

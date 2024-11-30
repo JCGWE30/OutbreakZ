@@ -20,6 +20,14 @@ public class TaskRunner {
         runTimer(delay/50,runnable);
     }
 
+    public static void runTask(long delay, Runnable runnable){
+        convert(runnable).runTaskLater(instance.plugin, delay);
+    }
+
+    public static void runTickTask(long delay, Runnable runnable){
+        runTask(delay/50, runnable);
+    }
+
     public static void runNextTick(Runnable runnable){
         convert(runnable).runTaskLater(instance.plugin, 1);
     }

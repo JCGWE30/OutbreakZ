@@ -1,6 +1,7 @@
 package org.lepigslayer.outbreakZ.Session;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
@@ -12,6 +13,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.lepigslayer.outbreakZ.Infection.InfectionEvents;
 import org.lepigslayer.outbreakZ.Infection.InfectionSystem;
 import org.lepigslayer.outbreakZ.OutbreakZ;
+import org.lepigslayer.outbreakZ.Utils.TaskChain;
 import org.lepigslayer.outbreakZ.Utils.TaskRunner;
 
 import java.text.SimpleDateFormat;
@@ -49,6 +51,17 @@ public class Session implements Listener {
     private BossBar bossBar;
 
     public void startSession(int number){
+        new TaskChain(TimeUnit.SECONDS.toMillis(1))
+                .addTask(()->broadcastInfo("§e3",null,Sound.BLOCK_NOTE_BLOCK_BASS))
+                .addTask(()->broadcastInfo("§e2",null,Sound.BLOCK_NOTE_BLOCK_BASS))
+                .addTask(()->broadcastInfo("§e1",null,Sound.BLOCK_NOTE_BLOCK_BASS))
+                .addTask(()->{
+                    broadcastInfo("§e§lBEGIN!!","§6The session has begun",Sound.ENTITY_ELDER_GUARDIAN_CURSE);
+                    finalizeStart(number);
+                }).execute();
+    }
+
+    private void finalizeStart(int number){
         this.sessionNumber = number;
         this.sessionStart = System.currentTimeMillis();
         this.isStarted = true;
@@ -65,6 +78,20 @@ public class Session implements Listener {
 
         startSessionTicker();
         startInfectionTicker();
+    }
+
+    private void endSession(){
+        OutbreakZ.callEvent(new SessionStateChangeEvent(false));
+        broadcastInfo("§e§lEnd Of Session!","§6The session has ended",Sound.ENTITY_ELDER_GUARDIAN_CURSE);
+    }
+
+    private void broadcastInfo(String title, String sub, Sound sound){
+        for(Player p:Bukkit.getOnlinePlayers()){
+            p.sendTitle(title,sub,10,70,20);
+            if(sound!=null){
+                p.playSound(p.getLocation(),sound,1,1);
+            }
+        }
     }
 
     public boolean isOngoing(){
@@ -85,7 +112,12 @@ public class Session implements Listener {
 
     private String getFormattedTime(){
         Date date = new Date(getTimeLeft());
-        SimpleDateFormat formatter = new SimpleDateFormat("mm:ss");
+        SimpleDateFormat formatter;
+        if(TimeUnit.MILLISECONDS.toHours(getTimeLeft())>0){
+            formatter = new SimpleDateFormat("hh:mm:ss");
+        }else {
+            formatter = new SimpleDateFormat("mm:ss");
+        }
         return formatter.format(date);
     }
 
@@ -102,7 +134,7 @@ public class Session implements Listener {
 
                 if(progress<=0){
                     isStarted = false;
-                    OutbreakZ.callEvent(new SessionStateChangeEvent(false));
+                    endSession();
                 }
 
                 bossBar.setProgress(Math.max(progress,0));

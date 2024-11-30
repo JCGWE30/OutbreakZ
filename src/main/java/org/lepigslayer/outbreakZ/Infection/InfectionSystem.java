@@ -99,7 +99,6 @@ public class InfectionSystem{
         instance.plugin = plugin;
         instance.turnDates = InfectionLoader.loadTurnDates(plugin);
         instance.states = InfectionLoader.loadInfectionStates(plugin);
-        instance.states.forEach((u,s)->s.setPlayer(Bukkit.getPlayer(u)));
     }
 
     public static void reloadNames(){
