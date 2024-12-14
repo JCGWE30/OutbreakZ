@@ -10,6 +10,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.lepigslayer.outbreakZ.Infection.InfectionDebug;
 import org.lepigslayer.outbreakZ.Infection.InfectionEvents;
 import org.lepigslayer.outbreakZ.Infection.InfectionSystem;
 import org.lepigslayer.outbreakZ.OutbreakZ;
@@ -42,7 +43,7 @@ public class Session implements Listener {
             return HANDLERS;
         }
     }
-    public static final long SESSION_LENGTH = TimeUnit.SECONDS.toMillis(10);
+    public static final long SESSION_LENGTH = TimeUnit.MINUTES.toMillis(90);
 
     private int sessionNumber;
     private long sessionStart;
@@ -152,7 +153,20 @@ public class Session implements Listener {
                     return;
                 }
 
-                InfectionEvents.scanPlayers();
+                InfectionEvents.passiveSpreadScan();
+                InfectionDebug.runDebug();
+            }
+        });
+
+        TaskRunner.runTickTimer(InfectionSystem.PASSIVE_DECAY_TIMER,new BukkitRunnable() {
+            @Override
+            public void run() {
+                if(!isStarted){
+                    this.cancel();
+                    return;
+                }
+
+                InfectionEvents.passiveDecaySpread();
             }
         });
     }

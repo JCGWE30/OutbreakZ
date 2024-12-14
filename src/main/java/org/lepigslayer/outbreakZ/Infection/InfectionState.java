@@ -34,11 +34,22 @@ public class InfectionState implements Serializable {
         if(isInfected())
             return;
         infectionPercentage += amount;
-        infectionRessitance = Math.max(0, infectionPercentage);
+        infectionPercentage = Math.max(0, infectionPercentage);
         InfectionSystem.tryInfect(Bukkit.getPlayer(owner));
     }
 
     boolean isInfected(){
         return infectionPercentage >= infectionRessitance;
+    }
+
+    public float getDebugInfo(String key){
+        switch (key){
+            case "infection":
+                return infectionPercentage;
+            case "resistance":
+                return infectionRessitance;
+            default:
+                throw new IllegalArgumentException();
+        }
     }
 }

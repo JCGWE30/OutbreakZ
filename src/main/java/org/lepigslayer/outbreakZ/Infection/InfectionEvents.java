@@ -3,26 +3,19 @@ package org.lepigslayer.outbreakZ.Infection;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
-import org.bukkit.scheduler.BukkitWorker;
 import org.lepigslayer.outbreakZ.Infection.Util.PlayerDiesEvent;
 import org.lepigslayer.outbreakZ.OutbreakZ;
 import org.lepigslayer.outbreakZ.Session.Session;
 import org.lepigslayer.outbreakZ.Utils.TaskRunner;
 
-import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import static org.lepigslayer.outbreakZ.Infection.InfectionSystem.*;
@@ -125,7 +118,7 @@ public class InfectionEvents implements Listener {
         victim.setFreezeTicks(0);
     }
 
-    public static void scanPlayers(){
+    public static void passiveSpreadScan(){
         for(Player p:InfectionSystem.getInfectedPlayers()){
             List<Player> uninfected = p.getNearbyEntities(5,5,5).stream()
                     .filter(e->e instanceof Player)
@@ -137,6 +130,13 @@ public class InfectionEvents implements Listener {
                 InfectionState state = getInfectionState(p2);
                 state.changeInfection(PASSIVE_SPREAD_AMOUNT);
             }
+        }
+    }
+
+    public static void passiveDecaySpread(){
+        for(Player p:InfectionSystem.getHealthyPlayers()){
+            InfectionState state = getInfectionState(p);
+            state.changeInfection(PASSIVE_DECAY_AMOUNT);
         }
     }
 }

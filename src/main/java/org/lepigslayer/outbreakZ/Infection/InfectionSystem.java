@@ -25,13 +25,20 @@ public class InfectionSystem{
     public static final long HIT_COOLDOWN = TimeUnit.MINUTES.toMillis(5);
     public static final float HIT_AMOUNT = 10;
 
-    public static final float PASSIVE_DECAY_AMOUNT = 1;
-    public static final long PASSIVE_DECAY_TIMER = TimeUnit.MINUTES.toMillis(10);
+//    Real values
+//    public static final float PASSIVE_DECAY_AMOUNT = 1;
+//    public static final long PASSIVE_DECAY_TIMER = TimeUnit.MINUTES.toMillis(10);
+//
+//    public static final float PASSIVE_SPREAD_AMOUNT = 1f/60f;
+//    public static final long PASSIVE_SPREAD_TIMER = TimeUnit.SECONDS.toMillis(1);
 
-    public static final float PASSIVE_SPREAD_AMOUNT = 20;
+    public static final float PASSIVE_DECAY_AMOUNT = -1;
+    public static final long PASSIVE_DECAY_TIMER = TimeUnit.SECONDS.toMillis(5);
+
+    public static final float PASSIVE_SPREAD_AMOUNT = 1;
     public static final long PASSIVE_SPREAD_TIMER = TimeUnit.SECONDS.toMillis(1);
 
-    public static final float SESSION_LOSS = -10;
+    public static final float SESSION_LOSS = -20;
 
     public static final float INFECTION_DAMAGE_DEBUFF = 0.85f;
     public static final float INFECTION_DEFENSE_DEBUFF = 1.25f;
@@ -52,6 +59,14 @@ public class InfectionSystem{
 
     public static List<Player> getInfectedPlayers() {
         return instance.turnDates.keySet().stream().map(Bukkit::getPlayer).toList();
+    }
+
+    public static List<Player> getHealthyPlayers(){
+        List<UUID> infected = instance.turnDates.keySet().stream().toList();
+        return Bukkit.getOnlinePlayers().stream()
+                .filter(p->!infected.contains(p.getUniqueId()))
+                .map(p->Bukkit.getPlayer(p.getUniqueId()))
+                .toList();
     }
 
     public static void tryInfect(Player p){
